@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteCharacterDialog(final String characterName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Delete character?");
+        builder.setTitle("Delete character");
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
