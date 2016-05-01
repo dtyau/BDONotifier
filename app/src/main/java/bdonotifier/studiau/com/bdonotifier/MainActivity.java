@@ -9,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
@@ -29,7 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_MAX_ENERGY = "lels";
-    private static final long CONSTANT_TIME = 30 * 60 * 1000; // minutes*seconds*milliseconds
+    private static final long CONSTANT_TIME_PER_ENERGY = 30 * 60 * 1000; // minutes*seconds*milliseconds
 
     private MySQLiteHelper characterDB;
     // This is a handle so that we can call methods on our service.
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         loadValues();
         loadCharacters();
         showCharacters();
+        updateCharacterEnergies();
     }
 
     private void loadValues() {
@@ -124,6 +124,16 @@ public class MainActivity extends AppCompatActivity {
             row.addView(characterEnergy, rightGravityParams);
 
             characterTable.addView(row);
+        }
+    }
+
+    private void updateCharacterEnergies() {
+        long currentTime = System.currentTimeMillis();
+        for ( Character character : characterList) {
+            long characterTime = character.getLastTimeStamp();
+            long timeDifference = currentTime - characterTime;
+            int energyRecovered = (int) Math.floor(timeDifference / CONSTANT_TIME_PER_ENERGY);
+            // Need to figure this shit out. lels
         }
     }
 
@@ -254,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
      * This is the onClick called from the XML to set a new notification.
      */
     public void setTimer(int newCharacterEnergy) {
-        long addTime = (long) (maxEnergy - newCharacterEnergy) * CONSTANT_TIME;
+        long addTime = (long) (maxEnergy - newCharacterEnergy) * CONSTANT_TIME_PER_ENERGY;
         long newTime = System.currentTimeMillis() + addTime;
         // Set the time to the specified number of minutes ahead of the current time.
         Calendar calendar = Calendar.getInstance();
