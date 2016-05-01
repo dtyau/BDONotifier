@@ -94,6 +94,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         character.setEnergy(Integer.parseInt(cursor.getString(2)));
         character.setLastTimeStamp(Long.parseLong(cursor.getString(3)));
 
+        cursor.close();
         // 5. Close the db.
         db.close();
 
@@ -124,6 +125,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 characters.add(character);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         // 4. Close the db.
         db.close();
 
@@ -166,7 +168,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         // 2. Delete the character.
         db.delete(TABLE_CHARACTERS, KEY_ID + " = ?",
-                new String[] { String.valueOf(character.getId()) }); // Select arguments
+                new String[]{String.valueOf(character.getId())}); // Select arguments
         // 3. Close the DB.
         db.close();
 
@@ -177,9 +179,39 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(TABLE_CHARACTERS, KEY_NAME + " = ?",
-                new String[] { characterName });
+                new String[]{characterName});
 
         db.close();
+    }
+
+    public Character findCharacter(String characterName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_CHARACTERS, COLUMNS,
+                " name = ?", // Selections
+                new String[] { String.valueOf(characterName) }, // Selection arguments
+                null, // Group by
+                null, // Having
+                null, // Order by
+                null); // Limit
+        // 3. If we get results, get the first one.
+        if (cursor != null ) {
+            cursor.moveToFirst();
+        }
+        // 4. Build the book object.
+        Character character = new Character();
+        character.setId(Integer.parseInt(cursor.getString(0)));
+        character.setName(cursor.getString(1));
+        character.setEnergy(Integer.parseInt(cursor.getString(2)));
+        character.setLastTimeStamp(Long.parseLong(cursor.getString(3)));
+
+        cursor.close();
+        // 5. Close the db.
+        db.close();
+
+        Log.d("getCharacter(" + ")", character.toString());
+        // 6. Return character.
+        return character;
     }
 
 }

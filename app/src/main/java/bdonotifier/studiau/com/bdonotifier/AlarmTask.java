@@ -25,11 +25,13 @@ public class AlarmTask implements Runnable  {
     private final AlarmManager alarmManager;
     // Your context to retrieve the alarm manager from.
     private final Context context;
+    private final int characterId;
 
-    public AlarmTask(Context context, Calendar calendar) {
+    public AlarmTask(Context context, Calendar calendar, int characterId) {
         this.context = context;
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         this.calendar = calendar;
+        this.characterId = characterId;
     }
 
     @Override
@@ -38,9 +40,10 @@ public class AlarmTask implements Runnable  {
         // We don't start an activity as we just want to pop up a notification into the system bar..
         Intent intent = new Intent(context, NotifyService.class);
         intent.putExtra(NotifyService.INTENT_NOTIFY, true);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, characterId, intent, 0);
 
         // Sets an alarm - note this alarm is lost if the phone is turned off.
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
     }
+
 }

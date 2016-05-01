@@ -37,10 +37,10 @@ public class ScheduleService extends Service {
     private final IBinder mBinder = new ServiceBinder();
 
     // Show an alarm for a certain date. When the alarm is called it will pop a notification.
-    public void setAlarm(Calendar calendar) {
+    public void setAlarm(Calendar calendar, int characterId) {
         // This starts a new thread to set the alarm.
         // You want to push off your tasks onto a new thread to free up the UI to carry on responding.
-        new AlarmTask(this, calendar).run();
+        new AlarmTask(this, calendar, characterId).run();
 
     }
 }

@@ -30,7 +30,7 @@ public class NotifyService extends Service {
     }
 
     // Unique id to identify the notification.
-    private static final int NOTIFICATION = 795;
+    private static final int NOTIFICATION = 295;
     // Name of an intent extra we can use to identify if this service was started
     // to create a notification.
     public static final String INTENT_NOTIFY = "bdonotifier.studiau.com.bdonotifier.INTENT_NOTIFY";

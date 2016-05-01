@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                             characterEnergy,
                             System.currentTimeMillis());
                     characterDB.addCharacter(character);
+                    setTimer(character);
                 }
                 refreshCharacters();
             }
@@ -225,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     Long characterTimeStamp = System.currentTimeMillis();
                     characterDB.updateCharacterEnergy(characterName, newCharacterEnergy, characterTimeStamp);
                     refreshCharacters();
-                    setTimer(newCharacterEnergy);
+                    setTimer(characterDB.findCharacter(characterName));
                 }
             }
         });
@@ -269,17 +270,18 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This is the onClick called from the XML to set a new notification.
      */
-    public void setTimer(float newCharacterEnergy) {
-        long addTime = (long) (maxEnergy - newCharacterEnergy) * CONSTANT_TIME_PER_ENERGY;
+    public void setTimer(Character character) {
+        long addTime = (long) (maxEnergy - character.getEnergy()) * CONSTANT_TIME_PER_ENERGY;
         long newTime = System.currentTimeMillis() + addTime;
         // Set the time to the specified number of minutes ahead of the current time.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(newTime);
-        //calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + timer);
+
+        int characterId = character.getId();
 
         // Ask our service to set an alarm for that day and time, this activity
         // talks to the client that talks to the service.
-        scheduleClient.setAlarmForNotification(calendar);
+        scheduleClient.setAlarmForNotification(calendar, characterId);
         // Notify the user what they just did.
         Toast.makeText(this, calendar.get(Calendar.YEAR) + "-" +
                 calendar.get(Calendar.MONTH) + "-" +

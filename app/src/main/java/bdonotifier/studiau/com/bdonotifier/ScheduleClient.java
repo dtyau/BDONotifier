@@ -49,8 +49,8 @@ public class ScheduleClient {
     };
 
     // Tell our service to set an alarm for the given date.
-    public void setAlarmForNotification(Calendar calendar) {
-        mBoundService.setAlarm(calendar);
+    public void setAlarmForNotification(Calendar calendar, int characterId) {
+        mBoundService.setAlarm(calendar, characterId);
     }
 
     // When you have finished with the service, call this method to stop it thereby
