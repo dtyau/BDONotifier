@@ -24,6 +24,8 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.List;
 
+// Test for github!
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_MAX_ENERGY = "lels";
