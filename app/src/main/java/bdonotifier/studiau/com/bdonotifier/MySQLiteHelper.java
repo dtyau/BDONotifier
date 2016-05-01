@@ -40,7 +40,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         String CREATE_CHARACTER_TABLE = "CREATE TABLE characters ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT, " +
-                "energy INTEGER, " +
+                "energy FLOAT, " +
                 "timestamp LONG )";
 
         // Create characters table.
@@ -49,10 +49,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older chracters table if existing.
+        // Drop older characters table if existing.
         db.execSQL("DROP TABLE IF EXISTS characters");
 
-        // Create fresh chracters table.
+        // Create fresh characters table.
         this.onCreate(db);
     }
 
@@ -150,7 +150,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return i;
     }
 
-    public int updateCharacterEnergy(String characterName, int characterEnergy, long characterTimeStamp) {
+    public int updateCharacterEnergy(String characterName, double characterEnergy, long characterTimeStamp) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_ENERGY, characterEnergy);

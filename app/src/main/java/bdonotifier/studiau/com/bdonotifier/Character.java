@@ -7,12 +7,12 @@ public class Character {
 
     int id;
     String name;
-    int energy;
+    float energy;
     long lastTimeStamp;
 
     public Character(){}
 
-    public Character(String name, int energy, long timeStamp) {
+    public Character(String name, float energy, long timeStamp) {
         super();
         this.name = name;
         this.energy = energy;
@@ -43,11 +43,11 @@ public class Character {
         this.lastTimeStamp = lastTimeStamp;
     }
 
-    public int getEnergy() {
+    public float getEnergy() {
         return energy;
     }
 
-    public void setEnergy(int energy) {
+    public void setEnergy(float energy) {
         this.energy = energy;
     }
 

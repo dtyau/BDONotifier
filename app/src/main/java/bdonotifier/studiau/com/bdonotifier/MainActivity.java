@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             row.addView(characterName);
 
             final Button characterEnergy = new Button(this);
-            characterEnergy.setText(String.valueOf(character.getEnergy()));
+            characterEnergy.setText(String.valueOf((int) Math.floor(character.getEnergy())));
             characterEnergy.setTextAppearance(this, R.style.MyNormalText);
             characterEnergy.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -167,11 +167,11 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String characterName = inputName.getText().toString();
-                int characterEnergy = Integer.valueOf(inputEnergy.getText().toString());
+                float characterEnergy = Float.valueOf(inputEnergy.getText().toString());
                 if (!characterName.equals("") && !String.valueOf(characterEnergy).equals("")
                         && characterEnergy < maxEnergy) {
                     Character character = new Character(characterName,
-                            Integer.valueOf(inputEnergy.getText().toString()),
+                            characterEnergy,
                             System.currentTimeMillis());
                     characterDB.addCharacter(character);
                 }
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int newCharacterEnergy = Integer.valueOf(inputEnergy.getText().toString());
+                float newCharacterEnergy = Float.valueOf(inputEnergy.getText().toString());
                 if (!inputEnergy.getText().toString().equals("") && newCharacterEnergy < maxEnergy) {
                     Long characterTimeStamp = System.currentTimeMillis();
                     characterDB.updateCharacterEnergy(characterName, newCharacterEnergy, characterTimeStamp);
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This is the onClick called from the XML to set a new notification.
      */
-    public void setTimer(int newCharacterEnergy) {
+    public void setTimer(float newCharacterEnergy) {
         long addTime = (long) (maxEnergy - newCharacterEnergy) * CONSTANT_TIME_PER_ENERGY;
         long newTime = System.currentTimeMillis() + addTime;
         // Set the time to the specified number of minutes ahead of the current time.
