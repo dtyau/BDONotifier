@@ -28,7 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_MAX_ENERGY = "lels";
-    private static final long CONSTANT_TIME_PER_ENERGY = 30 * 60 * 1000; // minutes*seconds*milliseconds
+    private static final long CONSTANT_TIME_PER_ENERGY = 1 * 60 * 1000; // minutes*seconds*milliseconds
 
     private MySQLiteHelper characterDB;
     // This is a handle so that we can call methods on our service.
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
         loadValues();
         loadCharacters();
-        showCharacters();
         updateCharacterEnergies();
+        showCharacters();
     }
 
     private void loadValues() {
@@ -113,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
             row.addView(characterName);
 
             final Button characterEnergy = new Button(this);
-            characterEnergy.setText(String.valueOf((int) Math.floor(character.getEnergy())));
+            //characterEnergy.setText(String.valueOf((int) Math.floor(character.getEnergy())));
+            characterEnergy.setText(String.valueOf(character.getEnergy()));
             characterEnergy.setTextAppearance(this, R.style.MyNormalText);
             characterEnergy.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -132,8 +133,13 @@ public class MainActivity extends AppCompatActivity {
         for ( Character character : characterList) {
             long characterTime = character.getLastTimeStamp();
             long timeDifference = currentTime - characterTime;
-            int energyRecovered = (int) Math.floor(timeDifference / CONSTANT_TIME_PER_ENERGY);
-            // Need to figure this shit out. lels
+            float energyRecovered = (float) timeDifference / CONSTANT_TIME_PER_ENERGY;
+            if (character.getEnergy() + energyRecovered > maxEnergy) {
+                character.setEnergy(maxEnergy);
+            } else {
+                character.setEnergy(character.getEnergy() + energyRecovered);
+            }
+            character.setLastTimeStamp(currentTime);
         }
     }
 
