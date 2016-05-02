@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                 "EEEE 'at' h:mm a", Locale.getDefault());
         String snackbarMessage = "Notification set for " +
                 simpleDateFormat.format(calendar.getTime());
-        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout),
                 snackbarMessage,
                 Snackbar.LENGTH_LONG);
         snackbar.show();
