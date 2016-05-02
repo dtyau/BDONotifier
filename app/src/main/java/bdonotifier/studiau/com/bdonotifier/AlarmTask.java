@@ -19,6 +19,9 @@ import java.util.Calendar;
  * This will run on its' own thread.
  */
 public class AlarmTask implements Runnable  {
+
+    public final static String INTENT_EXTRA_KEY_CHARACTER_NAME = "HiThisIsCharacterName";
+    public final static String INTENT_EXTRA_KEY_CHARACTER_ID = "HiThisIsCharacterId";
     // The date selected for the alarm.
     private final Calendar calendar;
     // The android system alarm manager.
@@ -26,12 +29,14 @@ public class AlarmTask implements Runnable  {
     // Your context to retrieve the alarm manager from.
     private final Context context;
     private final int characterId;
+    private final String characterName;
 
-    public AlarmTask(Context context, Calendar calendar, int characterId) {
+    public AlarmTask(Context context, Calendar calendar, int characterId, String characterName) {
         this.context = context;
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         this.calendar = calendar;
         this.characterId = characterId;
+        this.characterName = characterName;
     }
 
     @Override
@@ -40,6 +45,8 @@ public class AlarmTask implements Runnable  {
         // We don't start an activity as we just want to pop up a notification into the system bar..
         Intent intent = new Intent(context, NotifyService.class);
         intent.putExtra(NotifyService.INTENT_NOTIFY, true);
+        intent.putExtra(INTENT_EXTRA_KEY_CHARACTER_ID, characterId);
+        intent.putExtra(INTENT_EXTRA_KEY_CHARACTER_NAME, characterName);
         PendingIntent pendingIntent = PendingIntent.getService(context, characterId, intent, 0);
 
         // Sets an alarm - note this alarm is lost if the phone is turned off.

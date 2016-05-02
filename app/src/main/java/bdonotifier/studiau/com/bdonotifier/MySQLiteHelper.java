@@ -152,7 +152,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return i;
     }
 
-    public int updateCharacterEnergy(String characterName, double characterEnergy, long characterTimeStamp) {
+    public int updateCharacterEnergy(String characterName, float characterEnergy, long characterTimeStamp) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_ENERGY, characterEnergy);
@@ -160,6 +160,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         int i = db.update(TABLE_CHARACTERS, contentValues, KEY_NAME + " = ?",
                 new String[] { characterName });
         db.close();
+        Log.d("updateCharacterEnergy", characterName + ": " + characterEnergy);
         return i;
     }
 
