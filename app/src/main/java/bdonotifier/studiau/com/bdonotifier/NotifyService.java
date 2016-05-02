@@ -86,8 +86,9 @@ public class NotifyService extends Service {
                         .setSmallIcon(R.drawable.android_white)
                         .setContentTitle(title)
                         .setContentText(text)
+                        .setDefaults(Notification.DEFAULT_SOUND)
+                        .setDefaults(Notification.DEFAULT_VIBRATE)
                         .setLights(Color.GREEN, 500, 500)
-                        .setVibrate(new long[] {500, 500, 500, 500 } )
                         .setWhen(time)
                         .setGroup(GROUP_KEY_NOTIFICATIONS)
                         .setAutoCancel(true);

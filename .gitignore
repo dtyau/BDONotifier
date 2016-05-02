@@ -1,3 +1,5 @@
+/gradle/wrapper
+/build/intermediates/dex-cache
 /build
 /.idea
 /local.properties

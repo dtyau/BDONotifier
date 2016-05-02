@@ -1,29 +1,30 @@
 package bdonotifier.studiau.com.bdonotifier;
 
-import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
-
-// Test for github!
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     // This is a handle so that we can call methods on our service.
     private ScheduleClient scheduleClient;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor sharedPreferencesEditor;
     private Button maxEnergyButton;
     private TableLayout characterTable;
     private List<Character> characterList;
@@ -52,24 +52,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 createCharacterDialog();
-                }
-            });
+            }
+        });
 
-        characterDB = new MySQLiteHelper(this);
+        clearActiveNotifications();
 
         // Create a new service client and bind our activity to this service.
         scheduleClient = new ScheduleClient(this);
         scheduleClient.doBindService();
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPreferencesEditor = sharedPreferences.edit();
 
         maxEnergyButton = (Button) findViewById(R.id.maxEnergyButton);
+
+        characterDB = new MySQLiteHelper(this);
 
         loadValues();
         loadCharacters();
         updateCharacterEnergies();
         showCharacters();
+    }
+
+    private void clearActiveNotifications() {
+        NotificationManager notificationManager =
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     private void loadValues() {
@@ -84,47 +91,74 @@ public class MainActivity extends AppCompatActivity {
     private void refreshCharacters() {
         characterList.clear();
         loadCharacters();
+        updateCharacterEnergies();
         characterTable.removeAllViews();
-        characterTable.invalidate();
-        characterTable.refreshDrawableState();
         showCharacters();
     }
 
     private void showCharacters() {
         characterTable = (TableLayout) findViewById(R.id.characterTable);
         characterTable.setStretchAllColumns(true);
-        TableRow.LayoutParams rightGravityParams = new TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT);
-        rightGravityParams.gravity = Gravity.RIGHT;
-        for (Character character : characterList) {
-            TableRow row = new TableRow(this);
 
-            final TextView characterName = new TextView(this);
-            characterName.setText(character.getName());
-            characterName.setTextAppearance(this, R.style.MyNormalText);
-            characterName.setOnLongClickListener(new View.OnLongClickListener() {
+        for (Character character : characterList) {
+            final String characterName = character.getName();
+
+            final MyTextView characterNameTextView = new MyTextView(this, R.style.MyCharacterText);
+            characterNameTextView.setText(characterName);
+
+            // Energy recovered date and time.
+            final MyTextView characterReadyTextView = new MyTextView(this, R.style.MyCharacterSubText);
+            String characterReadyText = "Fully recovered!";
+            if (character.getEnergy() < maxEnergy) {
+                float characterEnergyDifference = maxEnergy - character.getEnergy();
+                long characterRecoveryTime = System.currentTimeMillis() +
+                        (long) (characterEnergyDifference * CONSTANT_TIME_PER_ENERGY);
+                Calendar characterCalendar = Calendar.getInstance();
+                characterCalendar.setTimeInMillis(characterRecoveryTime);
+                characterReadyText = "Wait till " +
+                        characterCalendar.getDisplayName(Calendar.DAY_OF_WEEK,
+                                Calendar.LONG, Locale.getDefault()) + " at " +
+                        characterCalendar.get(Calendar.HOUR) + ":" +
+                        characterCalendar.get(Calendar.MINUTE) + " " +
+                        characterCalendar.getDisplayName(Calendar.AM_PM,
+                                Calendar.LONG, Locale.getDefault());
+            }
+            characterReadyTextView.setText(characterReadyText);
+
+            // Energy Button
+            final MyButton characterEnergyButton = new MyButton(this, R.style.MyButtonText);
+            characterEnergyButton.setText(String.valueOf((int) Math.floor(character.getEnergy())));
+            //characterEnergyButton.setText(String.valueOf(character.getEnergy()));
+            characterEnergyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateEnergyDialog(characterName);
+                }
+            });
+
+            // Prototype
+            RelativeLayout characterLayout = new RelativeLayout(this);
+            characterLayout.setPadding(0, 64, 0, 0);
+            LinearLayout characterTextLayout = new LinearLayout(this);
+            characterTextLayout.setOrientation(LinearLayout.VERTICAL);
+            characterTextLayout.addView(characterNameTextView);
+            characterTextLayout.addView(characterReadyTextView);
+            characterTextLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    deleteCharacterDialog(characterName.getText().toString());
+                    deleteCharacterDialog(characterName);
                     return false;
                 }
             });
-            row.addView(characterName);
-
-            final Button characterEnergy = new Button(this);
-            //characterEnergy.setText(String.valueOf((int) Math.floor(character.getEnergy())));
-            characterEnergy.setText(String.valueOf(character.getEnergy()));
-            characterEnergy.setTextAppearance(this, R.style.MyNormalText);
-            characterEnergy.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    updateEnergyDialog(characterName.getText().toString());
-                }
-            });
-            row.addView(characterEnergy, rightGravityParams);
-
-            characterTable.addView(row);
+            characterLayout.addView(characterTextLayout);
+            LinearLayout characterButtonLayout = new LinearLayout(this);
+            characterButtonLayout.addView(characterEnergyButton);
+            RelativeLayout.LayoutParams characterButtonLayoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            characterButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            characterLayout.addView(characterButtonLayout, characterButtonLayoutParams);
+            characterTable.addView(characterLayout);
         }
     }
 
@@ -147,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createCharacterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialogTheme);
 
         builder.setTitle("Add Character");
 
@@ -195,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteCharacterDialog(final String characterName) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialogTheme);
 
-        builder.setTitle("Delete character");
+        builder.setTitle("Delete " + characterName + "?");
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -212,24 +246,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateEnergyDialog(final String characterName) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialogTheme);
         builder.setTitle("Current Energy");
 
         // Character energy input field.
         final EditText inputEnergy = new EditText(this);
         inputEnergy.setInputType(InputType.TYPE_CLASS_NUMBER);
         inputEnergy.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        inputEnergy.setHint(characterName + "'s new energy");
         builder.setView(inputEnergy);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                float newCharacterEnergy = Float.valueOf(inputEnergy.getText().toString());
-                if (!inputEnergy.getText().toString().equals("") && newCharacterEnergy < maxEnergy) {
+                if (!inputEnergy.getText().toString().equals("") &&
+                        Float.valueOf(inputEnergy.getText().toString()) < maxEnergy) {
+                    float newCharacterEnergy = Float.valueOf(inputEnergy.getText().toString());
                     Long characterTimeStamp = System.currentTimeMillis();
                     characterDB.updateCharacterEnergy(characterName, newCharacterEnergy, characterTimeStamp);
-                    refreshCharacters();
                     setTimer(characterDB.findCharacter(characterName));
+                    refreshCharacters();
                 }
             }
         });
@@ -241,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
      * This is the onClick called from the XML to set a Max Energy.
      */
     public void setMaxEnergy(View v) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialogTheme);
 
         builder.setTitle("Max Energy");
 
@@ -257,8 +293,8 @@ public class MainActivity extends AppCompatActivity {
                 String value = input.getText().toString();
                 if (!value.equals("")) {
                     int maxEnergy = Integer.valueOf(value);
-                    sharedPreferencesEditor.putInt(KEY_MAX_ENERGY, maxEnergy);
-                    sharedPreferencesEditor.commit();
+                    sharedPreferences.edit().putInt(KEY_MAX_ENERGY, maxEnergy);
+                    sharedPreferences.edit().apply();
                     maxEnergyButton.setText(String.valueOf(maxEnergy));
                 }
                 // Add method to reset all notifications.

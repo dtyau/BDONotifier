@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:buttonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -17,9 +18,25 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
-    <style name="MyNormalText">
+    <style name="MyAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@color/colorText</item>
+
+    </style>
+
+    <style name="MyCharacterText">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/colorText</item>
+    </style>
+    <style name="MyCharacterSubText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorText</item>
+    </style>
+    <style name="MyButtonText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
 </resources>

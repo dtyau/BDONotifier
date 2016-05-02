@@ -14,43 +14,41 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
+        style="@style/MyCharacterText"
         android:id="@+id/maxEnergy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingTop="6sp"
-        android:textSize="20sp"
         android:text="Family Max Energy:" />
 
     <Button
+        style="?android:attr/buttonBarButtonStyle"
         android:id="@+id/maxEnergyButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/maxEnergy"
         android:onClick="setMaxEnergy" />
 
     <TextView
+        style="@style/MyCharacterText"
         android:id="@+id/characterList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_below="@id/maxEnergyButton"
         android:paddingTop="6sp"
         android:paddingBottom="2sp"
-        android:textSize="20sp"
         android:text="Characters:" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:scrollbars="none"
         android:layout_weight="1">
 
         <TableLayout
             android:id="@+id/characterTable"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/characterList">
+            android:layout_height="wrap_content">
         </TableLayout>
 
     </ScrollView>
