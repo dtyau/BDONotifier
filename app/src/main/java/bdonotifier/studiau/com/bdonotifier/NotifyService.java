@@ -29,6 +29,8 @@ public class NotifyService extends Service {
         }
     }
 
+    private static int unreadNotifications = 0;
+    private static final String GROUP_KEY_NOTIFICATIONS = "IAmSameNotifications";
     // Unique id to identify the notification.
     private static final int NOTIFICATION = 295;
     // Name of an intent extra we can use to identify if this service was started
@@ -36,6 +38,8 @@ public class NotifyService extends Service {
     public static final String INTENT_NOTIFY = "bdonotifier.studiau.com.bdonotifier.INTENT_NOTIFY";
     // The system notification manager.
     private NotificationManager mNotificationManager;
+    private int characterId;
+    private String characterName;
 
     @Override
     public void onCreate() {
@@ -49,6 +53,8 @@ public class NotifyService extends Service {
 
         // If this service was started by our AlarmTask intent then we want to show the notification.
         if (intent.getBooleanExtra(INTENT_NOTIFY, false)) {
+            characterId = intent.getExtras().getInt(AlarmTask.INTENT_EXTRA_KEY_CHARACTER_ID);
+            characterName = intent.getExtras().getString(AlarmTask.INTENT_EXTRA_KEY_CHARACTER_NAME);
             showNotification();
         }
 
@@ -66,13 +72,11 @@ public class NotifyService extends Service {
 
     // Creates a notification and shows it in the OS drag-down status bar.
     private void showNotification() {
+        unreadNotifications++;
         // This is the title of the notification.
-        CharSequence title = "Alarm!!";
-        // This is the icon to use on the notification.
-        //int icon = R.drawable.ic_dialog_alert;
+        CharSequence title = "BDO Notifier";
         // This is the scrolling text of the notification.
-        CharSequence text = "Your notification time is upon us.";
-        Toast.makeText(this, title,Toast.LENGTH_LONG).show();
+        CharSequence text = characterName + " has recovered max energy!";
         // What time to show on the notification.
         long time = System.currentTimeMillis();
 
@@ -82,7 +86,15 @@ public class NotifyService extends Service {
                         .setContentTitle(title)
                         .setContentText(text)
                         .setLights(Color.GREEN, 500, 500)
+                        .setVibrate(new long[] {500, 500, 500, 500} )
+                        .setWhen(time)
+                        .setGroup(GROUP_KEY_NOTIFICATIONS)
                         .setAutoCancel(true);
+        if (unreadNotifications > 1) {
+            mNotificationManager.cancelAll();
+            mBuilder.setContentText(Integer.toString(unreadNotifications) +
+                    " characters have recovered fully.");
+        }
 
         // Creates an explicit intent for an Activity in your app.
         Intent resultIntent = new Intent(this, MainActivity.class);
@@ -101,7 +113,7 @@ public class NotifyService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
         mBuilder.setContentIntent(resultPendingIntent);
-        mNotificationManager.notify(NOTIFICATION, mBuilder.build());
+        mNotificationManager.notify(NOTIFICATION * characterId, mBuilder.build());
 
         // Stop the service when we are finished.
         stopSelf();

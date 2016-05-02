@@ -278,10 +278,11 @@ public class MainActivity extends AppCompatActivity {
         calendar.setTimeInMillis(newTime);
 
         int characterId = character.getId();
+        String characterName = character.getName();
 
         // Ask our service to set an alarm for that day and time, this activity
         // talks to the client that talks to the service.
-        scheduleClient.setAlarmForNotification(calendar, characterId);
+        scheduleClient.setAlarmForNotification(calendar, characterId, characterName);
         // Notify the user what they just did.
         Toast.makeText(this, calendar.get(Calendar.YEAR) + "-" +
                 calendar.get(Calendar.MONTH) + "-" +
