@@ -134,12 +134,15 @@ public class MainActivity extends AppCompatActivity {
             long characterTime = character.getLastTimeStamp();
             long timeDifference = currentTime - characterTime;
             float energyRecovered = (float) timeDifference / CONSTANT_TIME_PER_ENERGY;
-            if (character.getEnergy() + energyRecovered > maxEnergy) {
+            if (character.getEnergy() + energyRecovered >= maxEnergy) {
                 character.setEnergy(maxEnergy);
             } else {
                 character.setEnergy(character.getEnergy() + energyRecovered);
             }
             character.setLastTimeStamp(currentTime);
+            characterDB.updateCharacterEnergy(character.getName(),
+                    character.getEnergy(),
+                    character.getLastTimeStamp());
         }
     }
 
@@ -172,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                String characterName = inputName.getText().toString();
+                String characterName = inputName.getText().toString().trim();
                 float characterEnergy = Float.valueOf(inputEnergy.getText().toString());
                 if (!characterName.equals("") && !String.valueOf(characterEnergy).equals("")
                         && characterEnergy < maxEnergy) {
@@ -181,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
                             System.currentTimeMillis());
                     characterDB.addCharacter(character);
                     setTimer(character);
+                    refreshCharacters();
                 }
-                refreshCharacters();
             }
         });
 

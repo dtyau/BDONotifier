@@ -118,7 +118,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 character = new Character();
                 character.setId(Integer.parseInt(cursor.getString(0)));
                 character.setName(cursor.getString(1));
-                character.setEnergy(Integer.parseInt(cursor.getString(2)));
+                character.setEnergy(Float.parseFloat(cursor.getString(2)));
                 character.setLastTimeStamp(Long.parseLong(cursor.getString(3)));
 
                 // Add character to characters.
@@ -161,6 +161,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 new String[] { characterName });
         db.close();
         Log.d("updateCharacterEnergy", characterName + ": " + characterEnergy);
+        Log.d("updateCharacterEnergy", "Number of rows updated: " + Integer.valueOf(i));
         return i;
     }
 

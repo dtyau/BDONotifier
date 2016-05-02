@@ -73,6 +73,7 @@ public class NotifyService extends Service {
     // Creates a notification and shows it in the OS drag-down status bar.
     private void showNotification() {
         unreadNotifications++;
+        Log.d("showNotification()", "undreadNotifications: " + String.valueOf(unreadNotifications));
         // This is the title of the notification.
         CharSequence title = "BDO Notifier";
         // This is the scrolling text of the notification.
@@ -86,7 +87,7 @@ public class NotifyService extends Service {
                         .setContentTitle(title)
                         .setContentText(text)
                         .setLights(Color.GREEN, 500, 500)
-                        .setVibrate(new long[] {500, 500, 500, 500} )
+                        .setVibrate(new long[] {500, 500, 500, 500 } )
                         .setWhen(time)
                         .setGroup(GROUP_KEY_NOTIFICATIONS)
                         .setAutoCancel(true);
