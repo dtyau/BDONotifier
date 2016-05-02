@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -117,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
                         (long) (characterEnergyDifference * CONSTANT_TIME_PER_ENERGY);
                 Calendar characterCalendar = Calendar.getInstance();
                 characterCalendar.setTimeInMillis(characterRecoveryTime);
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE 'at' h:mm a", Locale.getDefault());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+                        "EEEE 'at' h:mm a", Locale.getDefault());
                 characterReadyText = "wait till " + simpleDateFormat.format(characterCalendar.getTime());
             }
             characterReadyTextView.setText(characterReadyText);
@@ -206,10 +208,11 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                String characterName = inputName.getText().toString().trim();
-                float characterEnergy = Float.valueOf(inputEnergy.getText().toString());
-                if (!characterName.equals("") && !String.valueOf(characterEnergy).equals("")
-                        && characterEnergy < maxEnergy) {
+                if (!inputName.getText().toString().equals("") &&
+                        !String.valueOf(inputEnergy.getText().toString()).equals("")
+                        && Float.valueOf(inputEnergy.getText().toString()) < maxEnergy) {
+                    String characterName = inputName.getText().toString().trim();
+                    float characterEnergy = Float.valueOf(inputEnergy.getText().toString());
                     Character character = new Character(characterName,
                             characterEnergy,
                             System.currentTimeMillis());
@@ -260,7 +263,9 @@ public class MainActivity extends AppCompatActivity {
                         Float.valueOf(inputEnergy.getText().toString()) < maxEnergy) {
                     float newCharacterEnergy = Float.valueOf(inputEnergy.getText().toString());
                     Long characterTimeStamp = System.currentTimeMillis();
-                    characterDB.updateCharacterEnergy(characterName, newCharacterEnergy, characterTimeStamp);
+                    characterDB.updateCharacterEnergy(characterName,
+                            newCharacterEnergy,
+                            characterTimeStamp);
                     setTimer(characterDB.findCharacter(characterName));
                     refreshCharacters();
                 }
@@ -322,11 +327,15 @@ public class MainActivity extends AppCompatActivity {
         // talks to the client that talks to the service.
         scheduleClient.setAlarmForNotification(calendar, characterId, characterName);
         // Notify the user what they just did.
-        Toast.makeText(this, calendar.get(Calendar.YEAR) + "-" +
-                calendar.get(Calendar.MONTH) + "-" +
-                calendar.get(Calendar.DAY_OF_MONTH) + " " +
-                calendar.get(Calendar.HOUR_OF_DAY) + ":" +
-                calendar.get(Calendar.MINUTE), Toast.LENGTH_LONG).show();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+                "EEEE 'at' h:mm a", Locale.getDefault());
+        String snackbarMessage = "Notification set for " +
+                simpleDateFormat.format(calendar.getTime());
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
+                snackbarMessage,
+                Snackbar.LENGTH_LONG);
+        snackbar.show();
+
     }
 
     private void resetCharacterTimers() {
