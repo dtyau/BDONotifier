@@ -22,7 +22,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -115,13 +117,8 @@ public class MainActivity extends AppCompatActivity {
                         (long) (characterEnergyDifference * CONSTANT_TIME_PER_ENERGY);
                 Calendar characterCalendar = Calendar.getInstance();
                 characterCalendar.setTimeInMillis(characterRecoveryTime);
-                characterReadyText = "Wait till " +
-                        characterCalendar.getDisplayName(Calendar.DAY_OF_WEEK,
-                                Calendar.LONG, Locale.getDefault()) + " at " +
-                        characterCalendar.get(Calendar.HOUR) + ":" +
-                        characterCalendar.get(Calendar.MINUTE) + " " +
-                        characterCalendar.getDisplayName(Calendar.AM_PM,
-                                Calendar.LONG, Locale.getDefault());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE 'at' h:mm a", Locale.getDefault());
+                characterReadyText = "wait till " + simpleDateFormat.format(characterCalendar.getTime());
             }
             characterReadyTextView.setText(characterReadyText);
 
@@ -292,10 +289,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String value = input.getText().toString();
                 if (!value.equals("")) {
-                    int maxEnergy = Integer.valueOf(value);
-                    sharedPreferences.edit().putInt(KEY_MAX_ENERGY, maxEnergy);
-                    sharedPreferences.edit().apply();
+                    maxEnergy = Integer.valueOf(value);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt(KEY_MAX_ENERGY, maxEnergy);
+                    editor.apply();
                     maxEnergyButton.setText(String.valueOf(maxEnergy));
+                    resetCharacterTimers();
                 }
                 // Add method to reset all notifications.
             }
@@ -309,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This is the onClick called from the XML to set a new notification.
      */
-    public void setTimer(Character character) {
+    private void setTimer(Character character) {
         long addTime = (long) (maxEnergy - character.getEnergy()) * CONSTANT_TIME_PER_ENERGY;
         long newTime = System.currentTimeMillis() + addTime;
         // Set the time to the specified number of minutes ahead of the current time.
@@ -328,6 +327,15 @@ public class MainActivity extends AppCompatActivity {
                 calendar.get(Calendar.DAY_OF_MONTH) + " " +
                 calendar.get(Calendar.HOUR_OF_DAY) + ":" +
                 calendar.get(Calendar.MINUTE), Toast.LENGTH_LONG).show();
+    }
+
+    private void resetCharacterTimers() {
+        for (Character character : characterList) {
+            if (character.getEnergy() < maxEnergy) {
+                setTimer(character);
+            }
+        }
+        refreshCharacters();
     }
 
     @Override

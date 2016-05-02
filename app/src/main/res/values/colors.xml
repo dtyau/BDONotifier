@@ -4,5 +4,5 @@
     <color name="colorPrimaryDark">#212121</color>
     <color name="colorAccent">#FF5252</color>
     <color name="colorText">#000000</color>
-    <color name="colorHint">#87000000</color>
+    <color name="colorSubText">#87000000</color>
 </resources>
