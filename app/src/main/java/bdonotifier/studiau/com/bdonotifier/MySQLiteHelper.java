@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,7 +56,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addCharacter(Character character) {
-        Log.d("addCharacter", character.toString());
 
         // 1. Get reference to writable DB.
         SQLiteDatabase db = this.getWritableDatabase();
@@ -98,7 +96,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // 5. Close the db.
         db.close();
 
-        Log.d("getCharacter(" + ")", character.toString());
         // 6. Return character.
         return character;
     }
@@ -129,8 +126,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // 4. Close the db.
         db.close();
 
-        Log.d("getAllCharacters()", characters.toString());
-
         // Return characters.
         return characters;
     }
@@ -160,8 +155,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         int i = db.update(TABLE_CHARACTERS, contentValues, KEY_NAME + " = ?",
                 new String[] { characterName });
         db.close();
-        Log.d("updateCharacterEnergy", characterName + ": " + characterEnergy);
-        Log.d("updateCharacterEnergy", "Number of rows updated: " + Integer.valueOf(i));
         return i;
     }
 
@@ -173,8 +166,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(character.getId())}); // Select arguments
         // 3. Close the DB.
         db.close();
-
-        Log.d("deleteCharacter", character.toString());
     }
 
     public void deleteCharacter(String characterName) {
@@ -211,7 +202,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // 5. Close the db.
         db.close();
 
-        Log.d("getCharacter(" + ")", character.toString());
         // 6. Return character.
         return character;
     }

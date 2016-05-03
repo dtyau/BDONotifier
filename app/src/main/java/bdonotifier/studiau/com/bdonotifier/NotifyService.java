@@ -7,12 +7,9 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by Daniel Au on 4/24/2016.
@@ -43,13 +40,11 @@ public class NotifyService extends Service {
 
     @Override
     public void onCreate() {
-        Log.i("NotifyService", "onCreate()");
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("LocalService", "received start is " + startId + ": " + intent);
 
         // If this service was started by our AlarmTask intent then we want to show the notification.
         if (intent.getBooleanExtra(INTENT_NOTIFY, false)) {
@@ -73,7 +68,6 @@ public class NotifyService extends Service {
     // Creates a notification and shows it in the OS drag-down status bar.
     private void showNotification() {
         unreadNotifications++;
-        Log.d("showNotification()", "undreadNotifications: " + String.valueOf(unreadNotifications));
         // This is the title of the notification.
         CharSequence title = "BDO Notifier";
         // This is the scrolling text of the notification.
@@ -83,12 +77,12 @@ public class NotifyService extends Service {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.android_white)
+                        .setSmallIcon(R.drawable.statusbar_white)
                         .setContentTitle(title)
                         .setContentText(text)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setDefaults(Notification.DEFAULT_VIBRATE)
-                        .setLights(Color.GREEN, 500, 500)
+                        .setDefaults(Notification.DEFAULT_SOUND |
+                                Notification.DEFAULT_VIBRATE |
+                                Notification.DEFAULT_LIGHTS)
                         .setWhen(time)
                         .setGroup(GROUP_KEY_NOTIFICATIONS)
                         .setAutoCancel(true);

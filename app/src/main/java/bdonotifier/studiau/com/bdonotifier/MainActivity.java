@@ -21,18 +21,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_MAX_ENERGY = "lels";
-    private static final long CONSTANT_TIME_PER_ENERGY = 1 * 60 * 1000; // minutes*seconds*milliseconds
+    private static final long CONSTANT_TIME_PER_ENERGY = 60 * 60 * 1000; // minutes*seconds*milliseconds
 
     private MySQLiteHelper characterDB;
     // This is a handle so that we can call methods on our service.
