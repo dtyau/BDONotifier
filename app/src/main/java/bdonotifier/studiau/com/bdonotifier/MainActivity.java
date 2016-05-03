@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     private void showCharacters() {
         characterTable = (TableLayout) findViewById(R.id.characterTable);
         characterTable.setStretchAllColumns(true);
+        characterTable.setPadding(0, 0, 0, 256);
 
         for (Character character : characterList) {
             final String characterName = character.getName();
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             // Energy Button
             final MyButton characterEnergyButton = new MyButton(this, R.style.MyButtonText);
             characterEnergyButton.setText(String.valueOf((int) Math.floor(character.getEnergy())));
-            //characterEnergyButton.setText(String.valueOf(character.getEnergy()));
             characterEnergyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
             characterLayout.addView(characterButtonLayout, characterButtonLayoutParams);
             characterTable.addView(characterLayout);
         }
+
     }
 
     private void updateCharacterEnergies() {
