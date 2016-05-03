@@ -208,15 +208,24 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (!inputName.getText().toString().equals("") &&
-                        !String.valueOf(inputEnergy.getText().toString()).equals("")
-                        && Float.valueOf(inputEnergy.getText().toString()) < maxEnergy) {
+                        !String.valueOf(inputEnergy.getText().toString()).equals("")) {
                     String characterName = inputName.getText().toString().trim();
                     float characterEnergy = Float.valueOf(inputEnergy.getText().toString());
+                    if (characterEnergy > maxEnergy) {
+                        String snackbarMessage = characterName + "'s energy cannot exceed max energy.";
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout),
+                                snackbarMessage,
+                                Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        characterEnergy = maxEnergy;
+                    }
                     Character character = new Character(characterName,
                             characterEnergy,
                             System.currentTimeMillis());
                     characterDB.addCharacter(character);
-                    setTimer(character);
+                    if (characterEnergy < maxEnergy) {
+                        setTimer(character);
+                    }
                     refreshCharacters();
                 }
             }
@@ -259,13 +268,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!inputEnergy.getText().toString().equals("") &&
-                        Float.valueOf(inputEnergy.getText().toString()) < maxEnergy) {
+                        Float.valueOf(inputEnergy.getText().toString()) <= maxEnergy) {
                     float newCharacterEnergy = Float.valueOf(inputEnergy.getText().toString());
                     Long characterTimeStamp = System.currentTimeMillis();
                     characterDB.updateCharacterEnergy(characterName,
                             newCharacterEnergy,
                             characterTimeStamp);
-                    setTimer(characterDB.findCharacter(characterName));
+                    if (newCharacterEnergy < maxEnergy) {
+                        setTimer(characterDB.findCharacter(characterName));
+                    }
                     refreshCharacters();
                 }
             }
