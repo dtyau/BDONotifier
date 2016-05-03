@@ -30,7 +30,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_MAX_ENERGY = "lels";
-    private static final long CONSTANT_TIME_PER_ENERGY = 60 * 60 * 1000; // minutes*seconds*milliseconds
+    private static final long CONSTANT_TIME_PER_ENERGY = 30 * 60 * 1000; // minutes*seconds*milliseconds
 
     private MySQLiteHelper characterDB;
     // This is a handle so that we can call methods on our service.
